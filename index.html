@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронный дневник - Сидоренко Эвелина</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .diary-app {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: #1e3c72;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .student-info {
+            background: #2a5298;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: white;
+            border-bottom: 1px solid #1e3c72;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #e3f2fd;
+            border-bottom: 1px solid #bbdefb;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: #1565c0;
+            flex: 1;
+            text-align: center;
+            min-width: 80px;
+            font-size: 13px;
+        }
+        
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #1976d2;
+            color: #0d47a1;
+        }
+        
+        .entry-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f3f9ff;
+            border-radius: 10px;
+            border: 1px solid #bbdefb;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 12px;
+            background: white;
+        }
+        
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #1565c0;
+        }
+        
+        .email-content {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .email-address {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 16px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .email-button {
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        
+        .email-button:hover {
+            background: #1565c0;
+        }
+        
+        .finance-content {
+            padding: 15px;
+        }
+        
+        .finance-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f3f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .finance-title {
+            color: #0d47a1;
+            margin-bottom: 12px;
+        }
+        
+        .payment-info {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin-top: 12px;
+        }
+        
+        .payment-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        
+        .payment-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+        }
+        
+        .payment-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .session-content {
+            text-align: center;
+            padding: 40px 15px;
+        }
+        
+        .session-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bbdefb;
+        }
+        
+        .session-message {
+            color: #546e7a;
+            font-size: 16px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .schedule {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bbdefb;
+        }
+        
+        .schedule h3 {
+            color: #0d47a1;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .week-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: #bbdefb;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        
+        .week-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #0d47a1;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .week-btn.active {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .week-schedule {
+            display: none;
+        }
+        
+        .week-schedule.active {
+            display: block;
+        }
+        
+        .day {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+            border: 1px solid #bbdefb;
+        }
+        
+        .day.weekend {
+            border-left-color: #64b5f6;
+            background: #e3f2fd;
+        }
+        
+        .day-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #1565c0;
+        }
+        
+        .location {
+            font-size: 13px;
+            color: #546e7a;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+        
+        .classes {
+            padding-left: 15px;
+        }
+        
+        .class-item {
+            margin-bottom: 4px;
+            color: #37474f;
+        }
+        
+        .grades-notification {
+            background: #e8f5e9;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .entries {
+            max-height: 300px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .entry {
+            background: white;
+            border-left: 4px solid #1976d2;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #e3f2fd;
+        }
+        
+        .entry-date {
+            color: #546e7a;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        
+        .entry-content {
+            color: #263238;
+            line-height: 1.5;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #78909c;
+            padding: 30px;
+            font-style: italic;
+        }
+        
+        .attendance-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        
+        .subject-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 5px solid #1976d2;
+            border: 1px solid #bbdefb;
+        }
+        
+        .subject-info {
+            flex-grow: 1;
+        }
+        
+        .subject-name {
+            font-weight: bold;
+            color: #1565c0;
+            margin-bottom: 4px;
+        }
+        
+        .subject-hours {
+            color: #546e7a;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .grades-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .grade {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .grade-title {
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+        
+        .grade-value {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .personal-grade {
+            color: #0d47a1;
+        }
+        
+        .group-grade {
+            color: #4a5568;
+        }
+        
+        .attendance-status {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            animation: pulse 2s infinite;
+            border: 1px solid #388E3C;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+        
+        .attendance-header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #0d47a1;
+        }
+        
+        .attendance-note {
+            text-align: center;
+            color: #546e7a;
+            font-style: italic;
+            margin-top: 15px;
+            padding: 12px;
+            background: #e3f2fd;
+            border-radius: 8px;
+        }
+        
+        .home-content {
+            line-height: 1.6;
+        }
+        
+        .home-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f3f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .home-title {
+            color: #0d47a1;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .course-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .course-list li {
+            margin-bottom: 6px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .course-list li:before {
+            content: "•";
+            color: #1976d2;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .highlight {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .telegram-link {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .telegram-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                min-width: 100%;
+                font-size: 12px;
+                padding: 8px;
+            }
+            
+            .payment-details {
+                flex-direction: column;
+            }
+            
+            .payment-item {
+                margin-bottom: 8px;
+            }
+            
+            .attendance-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-content {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 10px;
+            }
+            
+            .student-info {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            .home-section, .finance-section, .entry-form {
+                padding: 10px;
+            }
+            
+            .session-content {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Электронный дневник студента МФЮА</h1>
+        </header>
+        
+        <div class="student-info">
+            <strong>Сидоренко Эвелина Александровна</strong> | Группа: ПРд4410 | 2 курс
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="home">Главная</div>
+            <div class="tab" data-tab="schedule">Расписание</div>
+            <div class="tab" data-tab="attendance">Посещаемость</div>
+            <div class="tab" data-tab="session">Сессия</div>
+            <div class="tab" data-tab="finance">Финансы</div>
+            <div class="tab" data-tab="email">Почта</div>
+        </div>
+        
+        <div class="diary-app">
+            <!-- Вкладка Главная -->
+            <div class="tab-content active" id="home-tab">
+                <div class="home-content">
+                    <div class="home-section">
+                        <h2 class="home-title">🚀 Бесплатные курсы по IT... Ты в деле?</h2>
+                        <p>Делимся крутой возможностью от инновационно-образовательного комплекса «Техноград» — они приглашают тебя на свои курсы по программированию, верстке веб-сайтов, геймдизайну и многому другому!</p>
+                        
+                        <div class="highlight">
+                            <p><strong>📋 Что тебя ждет:</strong></p>
+                            <ul class="course-list">
+                                <li>Все курсы бесплатные, проходят онлайн</li>
+                                <li>Уровни как для начинающих, так и для спецов</li>
+                                <li>Сертификат о прохождении обучения</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>🎯 Как участвовать:</strong> Выбирай направление, регистрируйся и жди ссылку на вебинар у себя на почте!</p>
+                        
+                        <h3>📅 Расписание курсов:</h3>
+                        <ul class="course-list">
+                            <li><strong>Операционные системы и администрирование</strong>, старт 14 июня</li>
+                            <li><strong>Создание лендингов в конструкторе Tilda</strong>, старт 14 июня</li>
+                            <li><strong>Разработка компьютерных игр на Unity. Базовый уровень</strong>, старт 15 июня</li>
+                            <li><strong>3D-моделирование в Blender</strong>, старт 15 июня</li>
+                            <li><strong>Программирования на языке SWIFT. Базовый уровень</strong>, старт 15 июня</li>
+                            <li><strong>Интернет-маркетинг. Продвижение в социальных сетях (SMM). Продвинутый уровень 2</strong>, старт 17 июня</li>
+                            <li><strong>Верстка веб-сайтов на HTML. Продвинутый уровень 2</strong>, старт 18 июня</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="home-section">
+                        <h2 class="home-title">🎓 В МФЮА ОТКРЫЛСЯ ЦЕНТр КАРЬЕРЫ!</h2>
+                        <p>Центр развития карьеры МФЮА — твой путеводитель и помощник в построении успешной карьеры.</p>
+                        
+                        <div class="highlight">
+                            <p><strong>В нашем телеграмм канале ты найдешь:</strong></p>
+                            <ul class="course-list">
+                                <li>анонсы карьерных мероприятий;</li>
+                                <li>актуальные вакансии и стажировки;</li>
+                                <li>полезные материалы для студентов и выпускников.</li>
+                            </ul>
+                        </div>
+                        
+                        <h3>📍 Где нас можно найти?</h3>
+                        <ul class="course-list">
+                            <li>Мы находимся в главном корпусе МФЮА, в кабинете 5.21;</li>
+                            <li>Телеграм-канал: <a href="https://t.me/career_mfua" class="telegram-link" target="_blank">https://t.me/career_mfua</a></li>
+                            <li>Почта: Career@mfua.ru</li>
+                        </ul>
+                        
+                        <p>Заглядывай к нам, и мы с удовольствием расскажем про стажировки, поделимся историями успеха наших выпускников и поможем тебе с любыми вопросами.</p>
+                        <p><strong>Также вступай в группу и следи за новостями центра!</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вкладка Расписание -->
+            <div class="tab-content" id="schedule-tab">
+                <div class="entry-form">
+                    <textarea id="entryText" placeholder="Запишите здесь свои учебные заметки, задания, конспекты..."></textarea>
+                    <button id="saveEntry">Сохранить запись</button>
+                </div>
+                
+                <div class="schedule">
+                    <h3>📅 Расписание занятий</h3>
+                    
+                    <div class="week-switcher">
+                        <button class="week-btn active" data-week="current">Текущая неделя</button>
+                        <button class="week-btn" data-week="next">Следующая неделя</button>
+                    </div>
+                    
+                    <!-- Текущая неделя -->
+                    <div class="week-schedule active" id="current-week">
+                        <div class="day weekend">
+                            <div class="day-name">Понедельник</div>
+                            <div class="location">УК Калужский</div>
+                            <div class="classes">
+                                <div class="class-item">Выходной</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Вторник</div>
+                            <div class="location">УК Калужский, кабинет 4.11</div>
+                            <div class="classes">
+                                <div class="class-item">13:00 - Экономическая теория</div>
+                                <div class="class-item">15:00 - Экономическая теория</div>
+                                <div class="class-item">18:00 - Экономическая теория</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Среда</div>
+                            <div class="location">УК Калужский, кабинет 10.13</div>
+                            <div class="classes">
+                                <div class="class-item">13:00 - Защита информации</div>
+                                <div class="class-item">15:00 - Защита информации</div>
+                                <div class="class-item">18:00 - Защита информации</div>
+                            </div>
+                            <div class="grades-notification">
+                                <strong>🎉 Отличные новости!</strong> Вчера получила три пятерки по защите информации - по одной за каждую пару!
+                            </div>
+                        </div>
+                        
+                        <div class="day weekend">
+                            <div class="day-name">Четверг</div>
+                            <div class="location">УК Калужский</div>
+                            <div class="classes">
+                                <div class="class-item">Выходной</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Пятница</div>
+                            <div class="location">УК Калужский, кабинет 9.08</div>
+                            <div class="classes">
+                                <div class="class-item">13:00 - Теория алгоритмов</div>
+                                <div class="class-item">15:00 - Теория алгоритмов</div>
+                                <div class="class-item">18:00 - Теория алгоритмов</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Суббота</div>
+                            <div class="location">УК Калужский, кабинет 9.10</div>
+                            <div class="classes">
+                                <div class="class-item">9:00 - Алгоритмизация и программирование</div>
+                                <div class="class-item">11:00 - Алгоритмизация и программирование</div>
+                                <div class="class-item">13:00 - Алгоритмизация и программирование</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Воскресенье</div>
+                            <div class="location">УК Калужский</div>
+                            <div class="classes">
+                                <div class="class-item">Пар нет</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Следующая неделя -->
+                    <div class="week-schedule" id="next-week">
+                        <div class="day">
+                            <div class="day-name">Понедельник</div>
+                            <div class="location">УК Калужский, кабинет 8.08</div>
+                            <div class="classes">
+                                <div class="class-item">11:00 - Дискретная математика</div>
+                                <div class="class-item">13:00 - Дискретная математика</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Вторник</div>
+                            <div class="location">УК Калужский, кабинет 4.07</div>
+                            <div class="classes">
+                                <div class="class-item">11:00 - Элективная физкультура</div>
+                                <div class="class-item">13:00 - Иностранный язык</div>
+                                <div class="class-item">15:00 - Иностранный язык</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day weekend">
+                            <div class="day-name">Среда</div>
+                            <div class="location">УК Калужский</div>
+                            <div class="classes">
+                                <div class="class-item">Выходной</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Четверг</div>
+                            <div class="location">УК Калужский, кабинеты 5.10 и 10.11</div>
+                            <div class="classes">
+                                <div class="class-item">9:00 - Базы данных (каб. 5.10)</div>
+                                <div class="class-item">11:00 - Базы данных (каб. 5.10)</div>
+                                <div class="class-item">13:00 - Элективная физкультура (каб. 10.11)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Пятница</div>
+                            <div class="location">УК Калужский, кабинеты 7.08 и 4.01</div>
+                            <div class="classes">
+                                <div class="class-item">13:00 - Защита информации (каб. 7.08)</div>
+                                <div class="class-item">15:00 - Защита информации (каб. 7.08)</div>
+                                <div class="class-item">17:00 - Основы научных исследований (каб. 4.01)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day">
+                            <div class="day-name">Суббота</div>
+                            <div class="location">УК Калужский, кабинет 8.08</div>
+                            <div class="classes">
+                                <div class="class-item">16:00 - Дискретная математика</div>
+                                <div class="class-item">18:00 - Дискретная математика</div>
+                            </div>
+                        </div>
+                        
+                        <div class="day weekend">
+                            <div class="day-name">Воскресенье</div>
+                            <div class="location">УК Калужский</div>
+                            <div class="classes">
+                                <div class="class-item">Выходной</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="entries" id="entriesList">
+                    <div class="empty-state">Записей пока нет. Добавьте первую учебную запись!</div>
+                </div>
+            </div>
+            
+            <!-- Вкладка Посещаемость -->
+            <div class="tab-content" id="attendance-tab">
+                <div class="attendance-header">
+                    <h3>📊 Посещаемость и успеваемость</h3>
+                    <p>Статус посещаемости и текущие оценки за текущий семестр</p>
+                </div>
+                
+                <div class="attendance-list">
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Экономическая теория</div>
+                            <div class="subject-hours">Часы: 108</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.8</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Защита информации</div>
+                            <div class="subject-hours">Часы: 72</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">5.0</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.8</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Теория алгоритмов</div>
+                            <div class="subject-hours">Часы: 108</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.9</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.6</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Алгоритмизация и программирование</div>
+                            <div class="subject-hours">Часы: 144</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.7</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.3</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Дискретная математика</div>
+                            <div class="subject-hours">Часы: 108</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.6</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.2</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Иностранный язык</div>
+                            <div class="subject-hours">Часы: 72</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.8</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Базы данных</div>
+                            <div class="subject-hours">Часы: 108</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.6</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.2</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Основы научных исследований</div>
+                            <div class="subject-hours">Часы: 36</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">5.0</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.7</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Элективные занятия по физкультуре</div>
+                            <div class="subject-hours">Часы: 72</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">5.0</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-info">
+                            <div class="subject-name">Вычислительные сети</div>
+                            <div class="subject-hours">Часы: 72</div>
+                            <div class="grades-container">
+                                <div class="grade">
+                                    <div class="grade-title">Мой балл</div>
+                                    <div class="grade-value personal-grade">4.7</div>
+                                </div>
+                                <div class="grade">
+                                    <div class="grade-title">По группе</div>
+                                    <div class="grade-value group-grade">4.4</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attendance-status">100%</div>
+                    </div>
+                </div>
+                
+                <div class="attendance-note">
+                    <p>Все предметы посещаются в полном объеме. Отличная успеваемость! 🎉</p>
+                </div>
+            </div>
+            
+            <!-- Вкладка Сессия -->
+            <div class="tab-content" id="session-tab">
+                <div class="session-content">
+                    <div class="session-icon">📚</div>
+                    <h2 class="finance-title">Информация о сессии</h2>
+                    <p class="session-message">Информация пока отсутствует</p>
+                    <p>Данные о расписании экзаменов и зачетов появятся ближе к сессии</p>
+                </div>
+            </div>
+            
+            <!-- Вкладка Финансы -->
+            <div class="tab-content" id="finance-tab">
+                <div class="finance-content">
+                    <h2 class="finance-title">💰 Финансовая информация</h2>
+                    
+                    <div class="finance-section">
+                        <h3>📈 Увеличение стоимости обучения</h3>
+                        <p>Пожалуйста, ознакомьтесь с информацией об увеличении стоимости обучения для студентов вторых и последующих курсов, обучающихся на платной основе по программам среднего профессионального образования, высшего образования и аспирантуры, с учётом уровня инфляции на 4,5%.</p>
+                    </div>
+                    
+                    <div class="finance-section">
+                        <h3>📄 Договор на обучение</h3>
+                        <p><strong>Договор на обучение №1</strong></p>
+                        
+                        <div class="payment-info">
+                            <div class="payment-details">
+                                <div class="payment-item">
+                                    <div class="grade-title">Статус задолженности</div>
+                                    <div class="payment-value" style="color: #4caf50;">Отсутствует</div>
+                                </div>
+                                <div class="payment-item">
+                                    <div class="grade-title">Следующий платеж</div>
+                                    <div class="payment-value">28 января</div>
+                                </div>
+                                <div class="payment-item">
+                                    <div class="grade-title">Сумма платежа</div>
+                                    <div class="payment-value">163 000 ₽</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="finance-section">
+                        <h3>💳 Способы оплаты</h3>
+                        <ul class="course-list">
+                            <li>Онлайн-оплата через личный кабинет</li>
+                            <li>Банковский перевод по реквизитам</li>
+                            <li>Оплата в кассе университета</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вкладка Почта -->
+            <div class="tab-content" id="email-tab">
+                <div class="email-content">
+                    <h2>📧 Студенческая почта</h2>
+                    <p>Ваша корпоративная электронная почта МФЮА</p>
+                    
+                    <div class="email-address">
+                        <strong>Сидоренко Эвелина Александровна</strong><br>
+                        <span style="font-size: 18px; color: #0d47a1;">29455921@s.mfua.ru</span>
+                    </div>
+                    
+                    <p>Для входа в почтовую систему используйте ваши учетные данные МФЮА</p>
+                    
+                    <a href="https://mail.mfua.ru" class="email-button" target="_blank">Войти в почту</a>
+                    
+                    <div style="margin-top: 20px; padding: 12px; background: #f3f9ff; border-radius: 8px;">
+                        <h3>📋 Важная информация:</h3>
+                        <ul class="course-list">
+                            <li>Проверяйте почту ежедневно</li>
+                            <li>Все учебные уведомления приходят на эту почту</li>
+                            <li>Сохраняйте важные письма</li>
+                            <li>Используйте для связи с преподавателями</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для сохранения записи
+        document.getElementById('saveEntry').addEventListener('click', function() {
+            const entryText = document.getElementById('entryText').value.trim();
+            
+            if (entryText === '') {
+                alert('Пожалуйста, введите текст записи!');
+                return;
+            }
+            
+            // Создаем объект записи
+            const entry = {
+                id: Date.now(), // Используем timestamp как ID
+                date: new Date().toLocaleString('ru-RU'),
+                content: entryText
+            };
+            
+            // Получаем существующие записи из localStorage
+            let entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+            
+            // Добавляем новую запись в начало массива
+            entries.unshift(entry);
+            
+            // Сохраняем обратно в localStorage
+            localStorage.setItem('diaryEntries', JSON.stringify(entries));
+            
+            // Очищаем текстовое поле
+            document.getElementById('entryText').value = '';
+            
+            // Обновляем отображение записей
+            displayEntries();
+        });
+        
+        // Функция для отображения записей
+        function displayEntries() {
+            const entriesList = document.getElementById('entriesList');
+            const entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+            
+            if (entries.length === 0) {
+                entriesList.innerHTML = '<div class="empty-state">Записей пока нет. Добавьте первую учебную запись!</div>';
+                return;
+            }
+            
+            entriesList.innerHTML = entries.map(entry => `
+                <div class="entry">
+                    <div class="entry-date">${entry.date}</div>
+                    <div class="entry-content">${entry.content}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Функция для переключения вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Убираем активный класс у всех вкладок и контента
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Добавляем активный класс текущей вкладке
+                this.classList.add('active');
+                
+                // Показываем соответствующий контент
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Функция для переключения между неделями в расписании
+        document.querySelectorAll('.week-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Убираем активный класс у всех кнопок недель
+                document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+                // Убираем активный класс у всех расписаний недель
+                document.querySelectorAll('.week-schedule').forEach(s => s.classList.remove('active'));
+                
+                // Добавляем активный класс текущей кнопке
+                this.classList.add('active');
+                
+                // Показываем соответствующее расписание
+                const weekId = this.getAttribute('data-week');
+                document.getElementById(`${weekId}-week`).classList.add('active');
+            });
+        });
+        
+        // Загружаем записи при загрузке страницы
+        document.addEventListener('DOMContentLoaded', displayEntries);
+    </script>
+</body>
+</html>
